@@ -1,0 +1,15 @@
+[package]
+name = "exprcalc"
+version = "0.1.0"
+edition = "2021"
+description = "A fast arithmetic expression evaluator with a lexer and recursive-descent parser. Zero dependencies."
+license = "MIT"
+authors = ["Geovana Grigorio"]
+
+[[bin]]
+name = "exprcalc"
+path = "src/main.rs"
+
+[lib]
+name = "exprcalc"
+path = "src/lib.rs"
