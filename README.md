@@ -1,5 +1,7 @@
 ![exprcalc](assets/banner.svg)
 
+[![CI](https://github.com/geoggrigori/exprcalc/actions/workflows/ci.yml/badge.svg)](https://github.com/geoggrigori/exprcalc/actions/workflows/ci.yml)
+
 [![Rust](https://img.shields.io/badge/Rust-1.70%2B-000000?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![Cargo](https://img.shields.io/badge/Cargo-build-DEA584?logo=rust&logoColor=white)](https://doc.rust-lang.org/cargo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-6B2FB5)](LICENSE)
