@@ -17,6 +17,8 @@ pub enum TokenKind {
     Slash,
     /// The `%` operator.
     Percent,
+    /// The `^` exponentiation operator.
+    Caret,
     /// An opening parenthesis `(`.
     LParen,
     /// A closing parenthesis `)`.
@@ -81,6 +83,10 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, Error> {
                 tokens.push(Token::new(TokenKind::Percent, i));
                 i += 1;
             }
+            '^' => {
+                tokens.push(Token::new(TokenKind::Caret, i));
+                i += 1;
+            }
             '(' => {
                 tokens.push(Token::new(TokenKind::LParen, i));
                 i += 1;
@@ -135,6 +141,21 @@ mod tests {
                 TokenKind::Plus,
                 TokenKind::Number(2.5),
                 TokenKind::Star,
+                TokenKind::Number(3.0),
+                TokenKind::Eof,
+            ]
+        );
+    }
+
+    #[test]
+    fn lexes_caret() {
+        let toks = tokenize("2 ^ 3").unwrap();
+        let kinds: Vec<_> = toks.into_iter().map(|t| t.kind).collect();
+        assert_eq!(
+            kinds,
+            vec![
+                TokenKind::Number(2.0),
+                TokenKind::Caret,
                 TokenKind::Number(3.0),
                 TokenKind::Eof,
             ]
