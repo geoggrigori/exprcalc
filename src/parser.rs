@@ -224,6 +224,30 @@ mod tests {
     }
 
     #[test]
+    fn exponent_is_right_associative_in_tree() {
+        // 2 ^ 3 ^ 2  =>  Pow(2, Pow(3, 2))
+        let expr = ast("2 ^ 3 ^ 2");
+        match expr {
+            Expr::Binary { op: BinOp::Pow, right, .. } => {
+                assert!(matches!(*right, Expr::Binary { op: BinOp::Pow, .. }));
+            }
+            other => panic!("unexpected: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn exponent_binds_tighter_than_multiply_in_tree() {
+        // 2 * 3 ^ 2  =>  Mul(2, Pow(3, 2))
+        let expr = ast("2 * 3 ^ 2");
+        match expr {
+            Expr::Binary { op: BinOp::Mul, right, .. } => {
+                assert!(matches!(*right, Expr::Binary { op: BinOp::Pow, .. }));
+            }
+            other => panic!("unexpected: {other:?}"),
+        }
+    }
+
+    #[test]
     fn missing_operand_is_parse_error() {
         assert!(parse(tokenize("2 +").unwrap()).is_err());
     }
