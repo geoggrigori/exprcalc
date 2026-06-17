@@ -2,7 +2,9 @@
 //!
 //! The grammar (see the project README for the full EBNF) encodes the
 //! usual arithmetic precedence: `+` and `-` bind looser than `*`, `/`,
-//! and `%`, and unary minus binds tightest of all (right-associative).
+//! and `%`, which in turn bind looser than `^` (exponentiation), and
+//! unary minus binds tightest of all. Both `^` and unary minus are
+//! right-associative.
 
 use crate::lexer::{Token, TokenKind};
 use crate::Error;
@@ -20,6 +22,8 @@ pub enum BinOp {
     Div,
     /// Remainder (modulo).
     Rem,
+    /// Exponentiation (`^`), right-associative.
+    Pow,
 }
 
 /// An abstract syntax tree node for an arithmetic expression.
@@ -105,9 +109,9 @@ impl Parser {
         Ok(left)
     }
 
-    /// term := unary ( ("*" | "/" | "%") unary )*
+    /// term := power ( ("*" | "/" | "%") power )*
     fn parse_term(&mut self) -> Result<Expr, Error> {
-        let mut left = self.parse_unary()?;
+        let mut left = self.parse_power()?;
         loop {
             let op = match self.peek().kind {
                 TokenKind::Star => BinOp::Mul,
@@ -116,7 +120,7 @@ impl Parser {
                 _ => break,
             };
             self.advance();
-            let right = self.parse_unary()?;
+            let right = self.parse_power()?;
             left = Expr::Binary {
                 op,
                 left: Box::new(left),
@@ -124,6 +128,25 @@ impl Parser {
             };
         }
         Ok(left)
+    }
+
+    /// power := unary ( "^" power )?
+    ///
+    /// Exponentiation is right-associative, so `2 ^ 3 ^ 2` parses as
+    /// `2 ^ (3 ^ 2)`. It binds tighter than `* / %` but looser than
+    /// unary minus, so `-2 ^ 2` parses as `(-2) ^ 2`.
+    fn parse_power(&mut self) -> Result<Expr, Error> {
+        let base = self.parse_unary()?;
+        if self.peek().kind == TokenKind::Caret {
+            self.advance();
+            let exponent = self.parse_power()?;
+            return Ok(Expr::Binary {
+                op: BinOp::Pow,
+                left: Box::new(base),
+                right: Box::new(exponent),
+            });
+        }
+        Ok(base)
     }
 
     /// unary := "-" unary | primary

@@ -34,6 +34,7 @@ pub fn eval_expr(expr: &Expr) -> Result<f64, Error> {
                         Ok(l % r)
                     }
                 }
+                BinOp::Pow => Ok(l.powf(r)),
             }
         }
     }
