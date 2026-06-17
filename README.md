@@ -15,10 +15,12 @@ The whole crate is **standard library only** — no external dependencies.
 
 ## Features
 
-- Numbers (integer and floating point), the operators `+ - * / %`, unary minus,
-  and parentheses for grouping.
-- Correct operator precedence: `* / %` bind tighter than `+ -`.
-- Right-associative unary minus (`--5` evaluates to `5`).
+- Numbers (integer and floating point), the operators `+ - * / % ^`, unary
+  minus, and parentheses for grouping.
+- Correct operator precedence: `^` binds tighter than `* / %`, which bind
+  tighter than `+ -`.
+- Right-associative exponentiation (`2 ^ 3 ^ 2` evaluates to `512`) and
+  right-associative unary minus (`--5` evaluates to `5`).
 - A clean `Error` enum (`LexError`, `ParseError` with position, `DivisionByZero`)
   implementing `Display` and `std::error::Error`.
 - Usable as a **library** (`pub fn eval(input: &str) -> Result<f64, Error>`) or
@@ -45,7 +47,8 @@ The supported grammar, in EBNF-ish form:
 
 ```ebnf
 expr    = term , { ( "+" | "-" ) , term } ;
-term    = unary , { ( "*" | "/" | "%" ) , unary } ;
+term    = power , { ( "*" | "/" | "%" ) , power } ;
+power   = unary , [ "^" , power ] ;
 unary   = "-" , unary | primary ;
 primary = number | "(" , expr , ")" ;
 number  = digit , { digit } , [ "." , { digit } ]
@@ -54,8 +57,10 @@ digit   = "0".."9" ;
 ```
 
 Precedence (lowest to highest): additive (`+ -`) → multiplicative (`* / %`) →
-unary minus → primary. Unary minus is right-associative; the binary operators
-are left-associative.
+exponentiation (`^`) → unary minus → primary. Exponentiation and unary minus
+are right-associative; the additive and multiplicative operators are
+left-associative. Because unary minus binds tighter than `^`, `-2 ^ 2` parses
+as `(-2) ^ 2 = 4`; use `2 ^ (-1)` for a negative exponent.
 
 ## Build & install
 
@@ -83,6 +88,12 @@ $ exprcalc "-(2 + 3) * 4"
 
 $ exprcalc "10 % 3"
 1
+
+$ exprcalc "2 ^ 3 ^ 2"
+512
+
+$ exprcalc "2 * 3 ^ 2"
+18
 ```
 
 On an error the message goes to stderr and the process exits with status `1`:
