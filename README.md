@@ -10,10 +10,6 @@
 <a href="README.es.md"><img src="https://img.shields.io/badge/Español-555555?style=for-the-badge" alt="Español"/></a>
 </div>
 
-<div align="center">
-  <img src="assets/banner.svg" width="100%" alt="exprcalc"/>
-</div>
-
 <h1 align="center">exprcalc</h1>
 <p align="center"><em>Avaliador de expressões aritméticas rápido, escrito em Rust</em></p>
 <p align="center"><strong>Lexer → parser recursivo-descendente → avaliador → f64</strong></p>
