@@ -10,8 +10,6 @@
 <a href="README.es.md"><img src="https://img.shields.io/badge/Español-555555?style=for-the-badge" alt="Español"/></a>
 </div>
 
-![exprcalc](assets/banner.svg)
-
 [![CI](https://github.com/geoggrigori/exprcalc/actions/workflows/ci.yml/badge.svg)](https://github.com/geoggrigori/exprcalc/actions/workflows/ci.yml)
 
 [![Rust](https://img.shields.io/badge/Rust-1.70%2B-000000?logo=rust&logoColor=white)](https://www.rust-lang.org)
